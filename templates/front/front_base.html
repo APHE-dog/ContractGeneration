@@ -1,0 +1,334 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Webpixels">
+    <style>
+        @keyframes hidePreloader {
+            0% {
+                width: 100%;
+                height: 100%;
+            }
+
+            100% {
+                width: 0;
+                height: 0;
+            }
+        }
+
+        body > div.preloader {
+            position: fixed;
+            background: white;
+            width: 100%;
+            height: 100%;
+            z-index: 1071;
+            opacity: 0;
+            transition: opacity .5s ease;
+            overflow: hidden;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body:not(.loaded) > div.preloader {
+            opacity: 1;
+        }
+
+        body:not(.loaded) {
+            overflow: hidden;
+        }
+
+        body.loaded > div.preloader {
+            animation: hidePreloader .5s linear .5s forwards;
+        }
+        .avatar-box {
+            width: 25px; /* 设置圆形的宽度 */
+            height: 25px; /* 设置圆形的高度 */
+            background-color:#0b7ec4; /* 设置背景颜色为蓝色 */
+            border-radius: 50%; /* 将边框半径设置为50%，使其变成圆形 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white; /* 设置文字颜色为白色 */
+            font-size: 20px; /* 设置字体大小 */
+        }
+
+    </style>
+    <title>
+        {% block title %}
+
+        {% endblock title %}
+    </title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'img/brand/favicon.png' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'libs/@fortawesome/fontawesome-free/css/all.min.css' %}">
+    <!-- Quick CSS -->
+    <link rel="stylesheet" href="{% static 'css/quick-website.css' %}" id="stylesheet">
+
+    <style lang="scss">
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 8px;
+            background-color: #ebeef5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+            background-color: #ccc;
+        }
+
+        ::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 1);
+        }
+       #navbar-logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #111;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            filter: blur(2px);
+            animation: animate 2.5s linear infinite;
+            -webkit-text-stroke: 2px white;  /* 设置文字空心，1px是空心的宽度 */
+            font-style: italic;  /* 添加斜体样式 */
+        }
+
+@keyframes animate {
+    0%, 100% {
+        color: rgb(255, 255, 255);
+        filter: blur(2px);
+        text-shadow:
+            0 0 10px #ff5e00,
+            0 0 20px #d1ff02,
+            0 0 30px #32ff7e,
+            0 0 40px #00a2ff,
+            0 0 100px #5900ff,
+            0 0 200px #32ff7e,
+            0 0 300px #ff009d,
+            0 0 400px #32ff7e;
+    }
+    5%, 95% {
+        color: #111;
+        filter: blur(0px);
+        text-shadow: none;
+    }
+}
+
+
+
+    </style>
+
+</head>
+
+<body>
+<!-- Preloader -->
+{#<div class="preloader">#}
+{#    <div class="spinner-border text-primary" role="status">#}
+{#        <span class="sr-only">Loading...</span>#}
+{#    </div>#}
+{#</div>#}
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <div class="container">
+        <!-- Brand -->
+      <a class="navbar-brand" href="{% url 'front_index' %}">
+        <span id="navbar-logo"><i class="fas fa-file-contract"></i> 合同生成系统</span>
+      </a>
+
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mt-4 mt-lg-0 ml-auto">
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'front_index' %}">首页</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'front_chat' %}">对话</a>
+                </li>
+                {% endif %}
+            </ul>
+            <!-- Button -->
+                {% if user.is_authenticated and not user.is_staff %}
+                <!-- 用户已登录，显示蓝色框中的姓名首字母 -->
+                <div class="user-avatar">
+                    <div class="avatar-box">{{ user.first_name.0|upper }}</div>
+                    <div class="dropdown-menu" id="user-dropdown" aria-labelledby="user-avatar">
+                            <a class="dropdown-item" href="#" id="logout-btn">退出</a>
+                    </div>
+                </div>
+                {% else %}
+                <!-- 用户未登录，显示登录按钮 -->
+                <a class="navbar-btn btn btn-sm btn-primary d-none d-lg-inline-block ml-3" href="/login/">
+                    登录
+                </a>
+                {% endif %}
+            <!-- Mobile button -->
+            <div class="d-lg-none text-center">
+                <a href="#" class="btn btn-block btn-sm btn-warning">See
+                    more details</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% block main_content %}
+
+{% endblock %}
+
+
+
+<footer class="position-relative" id="footer-main">
+    <div class="footer pt-lg-7 footer-dark bg-dark">
+        <!-- SVG shape -->
+        <div class="shape-container shape-line shape-position-top shape-orientation-inverse">
+            <svg width="2560px" height="100px" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px"
+                 viewBox="0 0 2560 100" style="enable-background:new 0 0 2560 100;" xml:space="preserve"
+                 class=" fill-section-secondary">
+                    <polygon points="2560 0 2560 100 0 100"></polygon>
+                </svg>
+        </div>
+        <!-- Footer -->
+        <div class="container pt-4">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <!-- Theme's logo -->
+                    <a href="#">
+                        <img alt="Image placeholder" src="{% static 'img/brand/light.svg' %}" id="footer-logo">
+                    </a>
+                    <!-- Webpixels' mission -->
+                    <p class="mt-4 text-sm opacity-8 pr-lg-4">Webpixels attempts to bring the best development
+                        experience to designers and developers by offering the tools needed for having a quick and solid
+                        start in most web projects.</p>
+                    <!-- Social -->
+                    <ul class="nav mt-4">
+                        <li class="nav-item">
+                            <a class="nav-link pl-0" href="https://dribbble.com/webpixels" target="_blank">
+                                <i class="fab fa-dribbble"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/webpixels" target="_blank">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.instagram.com/webpxs" target="_blank">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.facebook.com/webpixels" target="_blank">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-6 col-sm-4 ml-lg-auto mb-5 mb-lg-0">
+                    <h6 class="heading mb-3">Account</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Profile</a></li>
+                        <li><a href="#">Settings</a></li>
+                        <li><a href="#">Billing</a></li>
+                        <li><a href="#">Notifications</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-6 col-sm-4 mb-5 mb-lg-0">
+                    <h6 class="heading mb-3">About</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-6 col-sm-4 mb-5 mb-lg-0">
+                    <h6 class="heading mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Help center</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="divider divider-fade divider-dark my-4">
+            <div class="row align-items-center justify-content-md-between pb-4">
+                <div class="col-md-6">
+                    <div class="copyright text-sm font-weight-bold text-center text-md-left">
+                        &copy; 2020 <a href="https://webpixels.io" class="font-weight-bold"
+                                       target="_blank">Webpixels</a>. All rights reserved
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <ul class="nav justify-content-center justify-content-md-end mt-3 mt-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Terms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Privacy
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Cookies
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+
+<!-- Core JS  -->
+<script src="{% static 'libs/jquery/dist/jquery.min.js' %}assets/"></script>
+<script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}assets/"></script>
+<script src="{% static 'libs/svg-injector/dist/svg-injector.min.js' %}"></script>
+<script src="{% static 'libs/feather-icons/dist/feather.min.js' %}"></script>
+<!-- Quick JS -->
+<script src="{% static 'js/quick-website.js' %}"></script>
+
+<!-- Feather Icons -->
+<script>
+    feather.replace({
+        'width': '1em',
+        'height': '1em'
+    })
+    const userAvatar = document.getElementById('user-avatar');
+    const userDropdown = document.getElementById('user-dropdown');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    userAvatar.addEventListener('mouseenter', function() {
+        userDropdown.classList.add('show');
+    });
+
+    userAvatar.addEventListener('mouseleave', function() {
+        userDropdown.classList.remove('show');
+    });
+
+    logoutBtn.addEventListener('click', function() {
+        // 发送退出请求
+        window.location.href = '/logout/'; // 重定向到退出页面
+    });
+</script>
+
+
+</html>
